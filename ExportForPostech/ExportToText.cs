@@ -23,7 +23,8 @@ namespace ExportForPostech
         private readonly string _strIP = System.Net.Dns.GetHostEntry(_strUser).AddressList.GetValue(1).ToString();
 
         readonly string _connectionString = "user id = HUBICVJ; password = HUBICVJ; data source = (DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = 211.54.128.21)(PORT = 1521)))(CONNECT_DATA = (SID = HUBICVJ)(SERVER = DEDICATED)));pooling = true";
-        
+        readonly string _connectionLMES = "user id = LMES; password = LMES; data source = (DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = 211.54.128.21)(PORT = 1521)))(CONNECT_DATA = (SID = LMES)(SERVER = DEDICATED)));pooling = true";
+
         private bool _isRun = false;
         DataTable _dtProc;
 
@@ -89,7 +90,61 @@ namespace ExportForPostech
         }
 
         [Obsolete]
-        private DataTable Load_Data_HubicDB(DataRow dr, string ArgLine = "", string ArgSdate = "", string ArgEdate = "",
+        private DataTable Load_Data_Direct(string ArgDB, string ArgProc, string ArgType, string ArgLine = "", string ArgSdate = "", string ArgEdate = "",
+                                    string ArgVal1 = "", string ArgVal2 = "", string ArgVal3 = "", string ArgVal4 = "", string ArgVal5 = "")
+        {
+            try
+            {
+                using (OracleConnection connection = new OracleConnection(_connectionLMES))
+                {
+                    connection.Open();
+                    using (OracleTransaction transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted))
+                    {
+                        using (OracleCommand command = new OracleCommand(ArgProc, connection))
+                        {
+                            command.Transaction = transaction;
+                            
+                            command.CommandType = CommandType.StoredProcedure;
+                            command.Parameters.Add("ARG_TYPE", OracleType.VarChar).Value = ArgType;
+                            command.Parameters.Add("ARG_LINE", OracleType.VarChar).Value = ArgLine;
+                            command.Parameters.Add("ARG_SDATE", OracleType.VarChar).Value = ArgSdate;
+                            command.Parameters.Add("ARG_EDATE", OracleType.VarChar).Value = ArgEdate;
+                            command.Parameters.Add("ARG_VAL1", OracleType.VarChar).Value = ArgVal1;
+                            command.Parameters.Add("ARG_VAL2", OracleType.VarChar).Value = ArgVal2;
+                            command.Parameters.Add("ARG_VAL3", OracleType.VarChar).Value = ArgVal3;
+                            command.Parameters.Add("ARG_VAL4", OracleType.VarChar).Value = ArgVal4;
+                            command.Parameters.Add("ARG_VAL5", OracleType.VarChar).Value = ArgVal5;
+                            command.Parameters.Add("OUT_CURSOR", OracleType.Cursor);
+
+                            command.Parameters["ARG_TYPE"].Direction = ParameterDirection.Input;
+                            command.Parameters["ARG_LINE"].Direction = ParameterDirection.Input;
+                            command.Parameters["ARG_SDATE"].Direction = ParameterDirection.Input;
+                            command.Parameters["ARG_EDATE"].Direction = ParameterDirection.Input;
+                            command.Parameters["ARG_VAL1"].Direction = ParameterDirection.Input;
+                            command.Parameters["ARG_VAL2"].Direction = ParameterDirection.Input;
+                            command.Parameters["ARG_VAL3"].Direction = ParameterDirection.Input;
+                            command.Parameters["ARG_VAL4"].Direction = ParameterDirection.Input;
+                            command.Parameters["ARG_VAL5"].Direction = ParameterDirection.Input;
+                            command.Parameters["OUT_CURSOR"].Direction = ParameterDirection.Output;
+
+                            DataTable dt = new DataTable();
+                            (new OracleDataAdapter(command)).Fill(dt);
+                            if (dt == null) return null;
+                            return dt;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+                return null;
+            }
+            
+        }
+
+        [Obsolete]
+        private DataTable Load_Data_HubicDB(string ArgDB, string ArgProc, string ArgType, string ArgLine = "", string ArgSdate = "", string ArgEdate = "",
                                     string ArgVal1 = "", string ArgVal2 = "", string ArgVal3 = "", string ArgVal4 = "", string ArgVal5 = "")
         {
             try
@@ -97,18 +152,18 @@ namespace ExportForPostech
                 using (OracleConnection connection = new OracleConnection(_connectionString))
                 {
                     connection.Open();
-                    using (OracleCommand command = new OracleCommand(dr["PROC_NAME"].ToString(), connection))
+                    using (OracleCommand command = new OracleCommand(ArgProc, connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.Add("ARG_TYPE", OracleType.VarChar).Value = dr["ARG_TYPE"].ToString();
-                        command.Parameters.Add("ARG_LINE", OracleType.VarChar).Value = dr["ARG_LINE"].ToString();
-                        command.Parameters.Add("ARG_SDATE", OracleType.VarChar).Value = dr["ARG_SDATE"].ToString();
-                        command.Parameters.Add("ARG_EDATE", OracleType.VarChar).Value = dr["ARG_EDATE"].ToString();
-                        command.Parameters.Add("ARG_VAL1", OracleType.VarChar).Value = dr["ARG_VAL1"].ToString();
-                        command.Parameters.Add("ARG_VAL2", OracleType.VarChar).Value = dr["ARG_VAL2"].ToString();
-                        command.Parameters.Add("ARG_VAL3", OracleType.VarChar).Value = dr["ARG_VAL3"].ToString();
-                        command.Parameters.Add("ARG_VAL4", OracleType.VarChar).Value = dr["ARG_VAL4"].ToString();
-                        command.Parameters.Add("ARG_VAL5", OracleType.VarChar).Value = dr["ARG_VAL5"].ToString();
+                        command.Parameters.Add("ARG_TYPE", OracleType.VarChar).Value = ArgType;
+                        command.Parameters.Add("ARG_LINE", OracleType.VarChar).Value = ArgLine;
+                        command.Parameters.Add("ARG_SDATE", OracleType.VarChar).Value = ArgSdate;
+                        command.Parameters.Add("ARG_EDATE", OracleType.VarChar).Value = ArgEdate;
+                        command.Parameters.Add("ARG_VAL1", OracleType.VarChar).Value = ArgVal1;
+                        command.Parameters.Add("ARG_VAL2", OracleType.VarChar).Value = ArgVal2;
+                        command.Parameters.Add("ARG_VAL3", OracleType.VarChar).Value = ArgVal3;
+                        command.Parameters.Add("ARG_VAL4", OracleType.VarChar).Value = ArgVal4;
+                        command.Parameters.Add("ARG_VAL5", OracleType.VarChar).Value = ArgVal5;
                         command.Parameters.Add("OUT_CURSOR", OracleType.Cursor);
 
                         command.Parameters["ARG_TYPE"].Direction = ParameterDirection.Input;
@@ -122,10 +177,10 @@ namespace ExportForPostech
                         command.Parameters["ARG_VAL5"].Direction = ParameterDirection.Input;
                         command.Parameters["OUT_CURSOR"].Direction = ParameterDirection.Output;
 
-                        DataSet ds = new DataSet();
-                        (new OracleDataAdapter(command)).Fill(ds);
-                        if (ds == null) return null;
-                        return ds.Tables[dr["PROC_NAME"].ToString()];
+                        DataTable dt = new DataTable();
+                        (new OracleDataAdapter(command)).Fill(dt);
+                        if (dt == null) return null;
+                        return dt;
                     }
                 }
             }
@@ -134,8 +189,9 @@ namespace ExportForPostech
                 MessageBox.Show(ex.ToString());
                 return null;
             }
-            
+
         }
+
 
         private DataTable Load_Proc(string ArgType = "", string ArgVal1 = "", string ArgVal2 = "", string ArgVal3 = "", string ArgVal4 = "", string ArgVal5 = "")
         {
@@ -148,7 +204,7 @@ namespace ExportForPostech
                 //ARGMODE
                 MyOraDB.ReDim_Parameter(7);
                 MyOraDB.Process_Name = process_name;
-                MyOraDB.Parameter_Name[0] = "ARG_TYPE";
+                MyOraDB.Parameter_Name[0] = "ARG_TYPE_RUN";
                 MyOraDB.Parameter_Name[1] = "ARG_VAL1";
                 MyOraDB.Parameter_Name[2] = "ARG_VAL2";
                 MyOraDB.Parameter_Name[3] = "ARG_VAL3";
@@ -228,14 +284,15 @@ namespace ExportForPostech
         }
         #endregion 
 
+        [Obsolete]
         private void ExportToText_Load(object sender, EventArgs e)
         {
-            timer1.Enabled = true;
             setCboProc();
             Run();
         }
 
-        private void Run()
+        [Obsolete]
+        private void Run(string ArgType = "")
         {
             try
             {
@@ -246,30 +303,147 @@ namespace ExportForPostech
                     _isRun = true;
                     DataTable dt = Load_Proc();
                     if (dt == null || dt.Rows.Count == 0) return;
-                    string Path = Application.StartupPath + @"\Export\";
-
+                    string Path = Application.StartupPath + @"\Export\";                  
                     DataTable dtGet = null;
+
+                    WriteLog("Start Run");
                     foreach (DataRow row in dt.Rows)
                     {
                         WriteLog("Execute: " + row["PROC_NAME"].ToString() + "|SEQ: " + row["SEQ"].ToString());
-                       // if (row["PATH_FOLDER"].ToString() != "") Path = row["PATH_FOLDER"].ToString();
-                        if (row["DB_NAME"].ToString() == "HUBIC") dtGet = Load_Data_HubicDB(row);
-                        else dtGet = Load_Data(row["DB_NAME"].ToString(), row["PROC_NAME"].ToString(), row["ARG_TYPE"].ToString());
+                        if (row["PATH_FOLDER"].ToString() != "" && chkSever.Checked) Path = row["PATH_FOLDER"].ToString();
+                        if (row["DB_NAME"].ToString() == "HUBIC")
+                        {
+                            dtGet = Load_Data_HubicDB(row["DB_NAME"].ToString(), row["PROC_NAME"].ToString(), row["ARG_TYPE"].ToString());
+                        }
+                        else
+                        {
+                            dtGet = Load_Data(row["DB_NAME"].ToString(), row["PROC_NAME"].ToString(), row["ARG_TYPE"].ToString());
+                        }
                         DatatableToText(row, dtGet, Path, string.Format(row["FILE_NAME"].ToString(), row["DATE_CREATE"].ToString()));
                         
                     }
-
+                    WriteLog("Finish Run");
+                    timer1.Enabled = true;
+                    _isRun = false;
                 });
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                timer1.Enabled = true;
+                _isRun = false;
+                WriteLog("Error: " + ex.ToString());               
+            }
+            
+        }
+
+        [Obsolete]
+        private void ExecAll()
+        {
+            try
+            {
+                this.BeginInvoke((MethodInvoker)delegate {
+                    timer1.Enabled = false;
+                    if (_isRun) return;
+
+                    _isRun = true;
+                    DataTable dt = Load_Proc("RUN");
+                    if (dt == null || dt.Rows.Count == 0)
+                    {
+                        WriteLog("No Data");
+                        return;
+                    }
+                    
+                    string Path = Application.StartupPath + @"\Export\";
+                    DateTime runDay = dtpDate.Value;
+                    DataTable dtGet = null;
+
+                    WriteLog("Start Run");
+                    while (runDay <= dtpEDate.Value)
+                    {
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            WriteLog("Execute: " + row["PROC_NAME"].ToString() + "|SEQ: " + row["SEQ"].ToString());
+                            if (row["PATH_FOLDER"].ToString() != "" && chkSever.Checked) Path = row["PATH_FOLDER"].ToString();
+                            if (row["DB_NAME"].ToString() == "HUBIC")
+                            {
+                                dtGet = Load_Data_HubicDB(row["DB_NAME"].ToString(), row["PROC_NAME"].ToString(), row["ARG_TYPE"].ToString(), "", runDay.ToString("yyyyMMdd"));
+                            }
+                            else
+                            {
+                                dtGet = Load_Data(row["DB_NAME"].ToString(), row["PROC_NAME"].ToString(), row["ARG_TYPE"].ToString(), "", runDay.ToString("yyyyMMdd"));
+                            }
+                            DatatableToText(row, dtGet, Path, string.Format(row["FILE_NAME"].ToString(), runDay.ToString("yyyyMMdd")));
+                        }
+                        runDay = runDay.AddDays(1);
+                    }
+                    WriteLog("Finish Run");
+                });
+            }
+            catch (Exception ex)
+            {
+                WriteLog("Error: " + ex.ToString());
+            }
+            finally
+            {
+                
+                _isRun = false;
+                timer1.Enabled = true;
+            }
+        }
+
+        [Obsolete]
+        private void Exec()
+        {
+            try
+            {
+                timer1.Enabled = false;
+                if (_isRun)
+                {
+                    WriteLog("Program is running");
+                    return;
+                }
+                    
+                _isRun = true;
+             
+                string strProc = cboProc.SelectedValue.ToString();
+                DateTime runDay = dtpDate.Value;
+                string Path = Application.StartupPath + @"\Export\";
+                DataTable dt;
+                DataRow row;
+                WriteLog("Start Run");
+                while (runDay.Date <= dtpEDate.Value.Date)
+                {
+                    WriteLog("Execute: " + strProc + " -->" + runDay.ToString("yyyyMMdd"));
+                  
+                    
+                    row = _dtProc.Select("NAME = '" + strProc + "'").FirstOrDefault();
+                    if (row["PATH_FOLDER"].ToString() != "" && chkSever.Checked) Path = row["PATH_FOLDER"].ToString();
+                    if (row["DB_NAME"].ToString() == "HUBIC")
+                        dt = Load_Data_HubicDB(row["DB_NAME"].ToString(), strProc, NullToBlank(cboType.SelectedValue), "", runDay.ToString("yyyyMMdd"));
+                    else
+                        dt = Load_Data(row["DB_NAME"].ToString(), strProc, NullToBlank(cboType.SelectedValue), "", runDay.ToString("yyyyMMdd"));
+                    if (dt != null)
+                    {
+                        WriteLog("Row: "  + dt.Rows.Count.ToString());
+                        DatatableToText(null, dt, Path, string.Format(row["FILE_NAME"].ToString(), runDay.ToString("yyyyMMdd")));
+                    }
+                    else
+                        WriteLog("Run No Data");
+                    runDay = runDay.AddDays(1);
+                }
+                WriteLog("Finish Run");
+            }
+            catch (Exception ex)
+            {
+                WriteLog("Error: " + ex.ToString());
             }
             finally
             {
                 _isRun = false;
                 timer1.Enabled = true;
             }
+
+
         }
 
         private void DatatableToText(DataRow dr, DataTable dt, string PathFolder, string FileName)
@@ -307,13 +481,13 @@ namespace ExportForPostech
                     }
 
                     if (dr != null) Write_LogDB(dr, "S", "Execute Success");
-                    WriteLog("  Execute Success" + DateTime.Now.ToString("[yyyy-MM-dd HH:mm:ss]"));
+                    WriteLog("Execute Success" + DateTime.Now.ToString("[yyyy-MM-dd HH:mm:ss]"));
                 }
             }
             catch (Exception ex)
             {
                 if (dr != null) Write_LogDB(dr, "E", ex.ToString());
-                WriteLog("  Error: " + ex.ToString());
+                WriteLog("Error: " + ex.ToString());
             }
             
         }
@@ -326,29 +500,28 @@ namespace ExportForPostech
                 _dtProc = Load_Proc("CBO_PROC");
                 DataView view = new DataView(_dtProc);
 
-                cboProc.DataSource = view.ToTable(true, "CODE", "NAME");
+                cboProc.DataSource = view.ToTable(true, "CODE", "NAME").Select("1=1").Distinct().CopyToDataTable();
                 cboProc.DisplayMember = "NAME";
                 cboProc.ValueMember = "CODE";
             }
             catch (Exception ex)
             {
-
-                throw;
+                MessageBox.Show(ex.ToString());
             }
            
         }
 
         private void setCboType()
         {
-            
-            cboType.DataSource = Load_Proc("CBO_TYPE", cboProc.SelectedValue.ToString());
-            cboType.DisplayMember = "NAME";
-            cboType.ValueMember = "CODE";
+            DataView view = new DataView(_dtProc);
+            cboType.DataSource = view.ToTable(true, "NAME", "ARG_TYPE").Select("NAME = '" + cboProc.SelectedValue.ToString() + "'").Distinct().CopyToDataTable();
+            cboType.DisplayMember = "ARG_TYPE";
+            cboType.ValueMember = "ARG_TYPE";
         }
 
         private void WriteLog(string argText)
         {
-            txtLog.Text += argText + "\r\n";
+            txtLog.Text += DateTime.Now.ToString("[yyyy-MM-dd HH:mm:ss]-->") + argText + "\r\n";
             txtLog.SelectionStart = txtLog.TextLength;
             txtLog.ScrollToCaret();
             txtLog.Refresh();
@@ -367,6 +540,7 @@ namespace ExportForPostech
             return obj.ToString();
         }
 
+        [Obsolete]
         private void timer1_Tick(object sender, EventArgs e)
         {
             Run();
@@ -377,50 +551,20 @@ namespace ExportForPostech
             setCboType();
         }
 
+        [Obsolete]
         private void cmdRun_Click(object sender, EventArgs e)
         {
             Exec();
-            //string strProc = cboProc.SelectedValue.ToString();
-            //WriteLog( "Execute: " + DateTime.Now.ToString("[yyyy-MM-dd HH:mm:ss] -->") + strProc + " -->" + dtpDate.Value.ToString("yyyyMMdd"));
-
-            //string Path = Application.StartupPath + @"\Export\";
-            //DataRow row = _dtProc.Select("NAME = '" + strProc + "'").FirstOrDefault();
-            //DataTable dt= Load_Data(row["DB_NAME"].ToString(), strProc, NullToBlank(cboType.SelectedValue), "", dtpDate.Value.ToString("yyyyMMdd"));
-            //WriteLog("  Row:" + DateTime.Now.ToString("[yyyy-MM-dd HH:mm:ss] -->") + dt.Rows.Count.ToString());
-            //DatatableToText(null, dt, Path, string.Format(row["FILE_NAME"].ToString(), dtpDate.Value.ToString("yyyyMMdd")));
         }
 
-        private void Exec()
+        [Obsolete]
+        private void cmdRunAll_Click(object sender, EventArgs e)
         {
-            timer1.Enabled = false;
-            string strProc = cboProc.SelectedValue.ToString();
-            DateTime runDay = dtpDate.Value;
-            while (runDay <= dtpEDate.Value)
-            {
-                WriteLog("Execute: " + DateTime.Now.ToString("[yyyy-MM-dd HH:mm:ss] -->") + strProc + " -->" + runDay.ToString("yyyyMMdd"));
-
-                string Path = Application.StartupPath + @"\Export\";
-                DataRow row = _dtProc.Select("NAME = '" + strProc + "'").FirstOrDefault();
-                DataTable dt = Load_Data(row["DB_NAME"].ToString(), strProc, NullToBlank(cboType.SelectedValue), "", runDay.ToString("yyyyMMdd"));
-                if (dt != null)
-                {
-                    WriteLog("  Row:" + DateTime.Now.ToString("[yyyy-MM-dd HH:mm:ss] -->") + dt.Rows.Count.ToString());
-                    DatatableToText(null, dt, Path, string.Format(row["FILE_NAME"].ToString(), runDay.ToString("yyyyMMdd")));
-                }
-                else
-                    WriteLog("  Run No Data" + DateTime.Now.ToString("[yyyy-MM-dd HH:mm:ss]"));
-                runDay = runDay.AddDays(1);
-            }
-            timer1.Enabled = true;
+            Run("RUN");
         }
 
-        //static async void WriteCharacters()
-        //{
-        //    using (StreamWriter writer = File.CreateText("newfile.txt"))
-        //    {
-        //        await writer.WriteLineAsync("First line of example");
-        //        await writer.WriteLineAsync("and second line");
-        //    }
-        //}
+        
+
+        
     }
 }

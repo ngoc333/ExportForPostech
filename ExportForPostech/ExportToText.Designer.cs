@@ -33,11 +33,14 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.cmdRunAll = new System.Windows.Forms.Button();
+            this.dtpEDate = new System.Windows.Forms.DateTimePicker();
+            this.cmdRun = new System.Windows.Forms.Button();
             this.dtpDate = new System.Windows.Forms.DateTimePicker();
             this.cboType = new System.Windows.Forms.ComboBox();
             this.cboProc = new System.Windows.Forms.ComboBox();
-            this.cmdRun = new System.Windows.Forms.Button();
-            this.dtpEDate = new System.Windows.Forms.DateTimePicker();
+            this.chkSever = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -75,6 +78,9 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.chkSever);
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.cmdRunAll);
             this.panel1.Controls.Add(this.dtpEDate);
             this.panel1.Controls.Add(this.cmdRun);
             this.panel1.Controls.Add(this.dtpDate);
@@ -85,6 +91,44 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(648, 62);
             this.panel1.TabIndex = 2;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(99, 41);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(14, 13);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "~";
+            // 
+            // cmdRunAll
+            // 
+            this.cmdRunAll.Location = new System.Drawing.Point(570, 9);
+            this.cmdRunAll.Name = "cmdRunAll";
+            this.cmdRunAll.Size = new System.Drawing.Size(75, 23);
+            this.cmdRunAll.TabIndex = 8;
+            this.cmdRunAll.Text = "Run All";
+            this.cmdRunAll.UseVisualStyleBackColor = true;
+            this.cmdRunAll.Click += new System.EventHandler(this.cmdRunAll_Click);
+            // 
+            // dtpEDate
+            // 
+            this.dtpEDate.CustomFormat = "yyyy-MM-dd";
+            this.dtpEDate.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dtpEDate.Location = new System.Drawing.Point(117, 37);
+            this.dtpEDate.Name = "dtpEDate";
+            this.dtpEDate.Size = new System.Drawing.Size(90, 20);
+            this.dtpEDate.TabIndex = 7;
+            // 
+            // cmdRun
+            // 
+            this.cmdRun.Location = new System.Drawing.Point(489, 8);
+            this.cmdRun.Name = "cmdRun";
+            this.cmdRun.Size = new System.Drawing.Size(75, 23);
+            this.cmdRun.TabIndex = 6;
+            this.cmdRun.Text = "Run 1 Proc";
+            this.cmdRun.UseVisualStyleBackColor = true;
+            this.cmdRun.Click += new System.EventHandler(this.cmdRun_Click);
             // 
             // dtpDate
             // 
@@ -112,24 +156,15 @@
             this.cboProc.TabIndex = 0;
             this.cboProc.SelectionChangeCommitted += new System.EventHandler(this.cboProc_SelectionChangeCommitted);
             // 
-            // cmdRun
+            // chkSever
             // 
-            this.cmdRun.Location = new System.Drawing.Point(532, 9);
-            this.cmdRun.Name = "cmdRun";
-            this.cmdRun.Size = new System.Drawing.Size(75, 23);
-            this.cmdRun.TabIndex = 6;
-            this.cmdRun.Text = "button1";
-            this.cmdRun.UseVisualStyleBackColor = true;
-            this.cmdRun.Click += new System.EventHandler(this.cmdRun_Click);
-            // 
-            // dtpEDate
-            // 
-            this.dtpEDate.CustomFormat = "yyyy-MM-dd";
-            this.dtpEDate.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtpEDate.Location = new System.Drawing.Point(119, 36);
-            this.dtpEDate.Name = "dtpEDate";
-            this.dtpEDate.Size = new System.Drawing.Size(90, 20);
-            this.dtpEDate.TabIndex = 7;
+            this.chkSever.AutoSize = true;
+            this.chkSever.Location = new System.Drawing.Point(403, 42);
+            this.chkSever.Name = "chkSever";
+            this.chkSever.Size = new System.Drawing.Size(87, 17);
+            this.chkSever.TabIndex = 10;
+            this.chkSever.Text = "Export Sever";
+            this.chkSever.UseVisualStyleBackColor = true;
             // 
             // ExportToText
             // 
@@ -143,6 +178,7 @@
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -157,6 +193,9 @@
         private System.Windows.Forms.DateTimePicker dtpDate;
         private System.Windows.Forms.Button cmdRun;
         private System.Windows.Forms.DateTimePicker dtpEDate;
+        private System.Windows.Forms.Button cmdRunAll;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckBox chkSever;
     }
 }
 

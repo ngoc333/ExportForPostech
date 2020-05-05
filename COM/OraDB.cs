@@ -250,6 +250,7 @@ namespace COM
 				{
 					ComVar._WebSvc.Timeout = TimeOut;
 					DS_Ret = ComVar._WebSvc.Ora_Modify_Procedure(RunUser, this.DS_Modify);
+					 ComVar._WebSvc.Ora_Select_ProcedureAsync(RunUser, this.DS_Modify);
 				}
 
 				if (DS_Ret.DataSetName == "ERROR")      
@@ -434,15 +435,75 @@ namespace COM
 
 		}
 
+		public DataSet Exe_Run_ProcedureSync()
+		{
+			//DataSet DS_Ret = new DataSet();
+			string[] RunUser;
+
+			try
+			{
+				RunUser = ComFunction.Set_UserInfo(ComVar.Log_Type.Write_File_DB);
+				DS_Ret = ComVar._WebSvc.Ora_Run_Procedure(RunUser, this.DS_Run);
+
+				// --------------- DataSet Format----------------
+				// DataSet 에는 복수개의 DataTable을 이용하여 호출 할 수 있으면 Return도 복수개임
+				// < 호출시 전달 값 >
+				// 1. RunUser : Set_UserInfo에서 설정하여 배열로 전달
+				// 2. DS_Run : Procedure 실행을 위한 DataSet(복수개의 Procedure를 호출할수 있슴)
+				//		1) DT_Run.TableName : 호출하고자 하는 Oracle Package 및 Procedure 명
+				//		2) DT_Run.Column[0] : 칼럼명 -> "Parameter_Name",데이터 Type -> Type.GetType("System.String") , 프로시저 전달인자
+				//		3) DT_Run.Column[1] : 칼럼명 -> "Parameter_Type",데이터 Type -> Type.GetType("System.Int32") , OracleType형의 Enum값
+				//		4) DT_Run.Column[2] : 칼럼명 -> "Parameter_Value",데이터 Type -> Type.GetType("System.String") , 프로시저 전달값
+				// 
+				// < 리턴시 전달 값 >
+				// 1. 정상 Return 값
+				//		1) DataSet.DT.TableName : 호출한 Oracle Package 및 Procedure 명
+				//		2) DataSet.DT.Columns	: 결과값의 데이터 필드 Column[0].ColumnName = "Result"
+				//		3) DataSet.DT.Rows[0]	: 결과값의 레코드  Row[0]= 처리결과값
+				// 2. 오류시 Return 값
+				//		1) DataSet.DataSetName  : "ERROR"
+				//		1) DataSet.DT.TableName : 호출한 Oracle Package 및 Procedure 명
+				//		2) DataSet.DT.Columns	: 오류내용의 데이터 필드 Column[0].ColumnName = "Method", Column[1].ColumnName = "Error" , Column[2].ColumnName = "Date"
+				//		3) DataSet.DT.Rows		: 오류의 내용
+
+				//Return 값 처리
+				if (DS_Ret.DataSetName == "ERROR")      // 오류가 Return
+				{
+					//string err_msg="" ;
+					//for(int i=0 ; i< DS_Ret.Tables.Count ;i++)
+					//{
+					//    DataRow dr = DS_Ret.Tables[i].Rows[0];
+					//    err_msg = err_msg + "Exec. Procedur :" + DS_Ret.Tables[i].TableName + " ,Method :" + dr["Method"].ToString() + "\n" ;
+					//    err_msg = err_msg + "Error Message :" + dr["Error"].ToString() + "\n"  ;  
+					//}
+					//MessageBox.Show( err_msg,"Oracle DataBase Process",MessageBoxButtons.OK,MessageBoxIcon.Error) ;
+					return null;
+
+				}
+				else
+				{
+
+					return DS_Ret;
+				}
+
+			}
+			catch (Exception)
+			{
+				//MessageBox.Show( ex.Message,"Exe_Select_Procedure",MessageBoxButtons.OK,MessageBoxIcon.Error) ;
+				return null;
+			}
+
+		}
 
 
 
- 
 
 
 
 
-		
+
+
+
 
 
 
@@ -576,7 +637,7 @@ namespace COM
 
 			try
 			{
-				RunUser =ComFunction.Set_UserInfo(ComVar.Log_Type.Write_File_DB);
+				RunUser =ComFunction.Set_UserInfo(ComVar.Log_Type.Write_NOLog);
 				DS_Ret=  ComVar._WebSvc.Ora_Select(RunUser,SqlTxt);
 
 				// --------------- DataSet Format----------------
