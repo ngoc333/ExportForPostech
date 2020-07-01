@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExportForPostech", "ExportF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Com", "COM\Com.csproj", "{992378C3-66A1-4E98-96F5-CE2B26E0CAB2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{7EF83A72-BBE7-4FFF-870C-C184BCABBE4F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,14 @@ Global
 		{992378C3-66A1-4E98-96F5-CE2B26E0CAB2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{992378C3-66A1-4E98-96F5-CE2B26E0CAB2}.Release|x86.ActiveCfg = Release|x86
 		{992378C3-66A1-4E98-96F5-CE2B26E0CAB2}.Release|x86.Build.0 = Release|x86
+		{7EF83A72-BBE7-4FFF-870C-C184BCABBE4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EF83A72-BBE7-4FFF-870C-C184BCABBE4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EF83A72-BBE7-4FFF-870C-C184BCABBE4F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7EF83A72-BBE7-4FFF-870C-C184BCABBE4F}.Debug|x86.Build.0 = Debug|Any CPU
+		{7EF83A72-BBE7-4FFF-870C-C184BCABBE4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EF83A72-BBE7-4FFF-870C-C184BCABBE4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EF83A72-BBE7-4FFF-870C-C184BCABBE4F}.Release|x86.ActiveCfg = Release|Any CPU
+		{7EF83A72-BBE7-4FFF-870C-C184BCABBE4F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

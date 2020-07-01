@@ -292,17 +292,26 @@ namespace ExportForPostech
         }
 
         [Obsolete]
-        private void Run(string ArgType = "")
+        private void Run()
         {
             try
             {
                 this.BeginInvoke((MethodInvoker)delegate {
                     timer1.Enabled = false;
-                    if (_isRun) return;
-                   
+                    //if (_isRun)
+                    //{
+                    //    WriteLog("Program is running");
+                    //    _isRun = false;
+                    //    return;
+                    //}
+
                     _isRun = true;
                     DataTable dt = Load_Proc();
-                    if (dt == null || dt.Rows.Count == 0) return;
+                    if (dt == null || dt.Rows.Count == 0)
+                    {
+                        timer1.Enabled = true;
+                        return;
+                    }
                     string Path = Application.StartupPath + @"\Export\";                  
                     DataTable dtGet = null;
 
@@ -310,7 +319,7 @@ namespace ExportForPostech
                     foreach (DataRow row in dt.Rows)
                     {
                         WriteLog("Execute: " + row["PROC_NAME"].ToString() + "|SEQ: " + row["SEQ"].ToString());
-                        if (row["PATH_FOLDER"].ToString() != "" && chkSever.Checked) Path = row["PATH_FOLDER"].ToString();
+                        if (row["PATH_FOLDER"].ToString() != "" ) Path = row["PATH_FOLDER"].ToString();
                         if (row["DB_NAME"].ToString() == "HUBIC")
                         {
                             dtGet = Load_Data_HubicDB(row["DB_NAME"].ToString(), row["PROC_NAME"].ToString(), row["ARG_TYPE"].ToString());
@@ -341,23 +350,31 @@ namespace ExportForPostech
         {
             try
             {
+                timer1.Enabled = false;
+                //if (_isRun)
+                //{
+                //    WriteLog("Program is running");
+                //    _isRun = false;
+                //    return;
+                //}
+                _isRun = true;
+                DataTable dt = Load_Proc("RUN");
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    WriteLog("No Data");
+                    timer1.Enabled = true;
+                    return;
+                }
+
+                string Path = Application.StartupPath + @"\Export\";
+                DateTime runDay = dtpDate.Value;
+                DataTable dtGet = null;
+
+                WriteLog("Start Run");
+
                 this.BeginInvoke((MethodInvoker)delegate {
-                    timer1.Enabled = false;
-                    if (_isRun) return;
 
-                    _isRun = true;
-                    DataTable dt = Load_Proc("RUN");
-                    if (dt == null || dt.Rows.Count == 0)
-                    {
-                        WriteLog("No Data");
-                        return;
-                    }
-                    
-                    string Path = Application.StartupPath + @"\Export\";
-                    DateTime runDay = dtpDate.Value;
-                    DataTable dtGet = null;
-
-                    WriteLog("Start Run");
+                     
                     while (runDay <= dtpEDate.Value)
                     {
                         foreach (DataRow row in dt.Rows)
@@ -373,6 +390,9 @@ namespace ExportForPostech
                                 dtGet = Load_Data(row["DB_NAME"].ToString(), row["PROC_NAME"].ToString(), row["ARG_TYPE"].ToString(), "", runDay.ToString("yyyyMMdd"));
                             }
                             DatatableToText(row, dtGet, Path, string.Format(row["FILE_NAME"].ToString(), runDay.ToString("yyyyMMdd")));
+                            if (dtGet != null) dtGet.Clear();
+
+                            
                         }
                         runDay = runDay.AddDays(1);
                     }
@@ -385,8 +405,7 @@ namespace ExportForPostech
             }
             finally
             {
-                
-                _isRun = false;
+                //_isRun = false;
                 timer1.Enabled = true;
             }
         }
@@ -396,32 +415,34 @@ namespace ExportForPostech
         {
             try
             {
-                timer1.Enabled = false;
-                if (_isRun)
-                {
-                    WriteLog("Program is running");
-                    return;
-                }
+                //timer1.Enabled = false;
+                //if (_isRun)
+                //{
+                //    WriteLog("Program is running");
+                //    _isRun = false;
+                //    return;
+                //}
                     
                 _isRun = true;
              
                 string strProc = cboProc.SelectedValue.ToString();
                 DateTime runDay = dtpDate.Value;
                 string Path = Application.StartupPath + @"\Export\";
+                string strType = NullToBlank(cboType.SelectedValue);
+                string strSqlArgType = strType == "" ? "IS NULL" : " ='" + strType + "'";
                 DataTable dt;
                 DataRow row;
                 WriteLog("Start Run");
                 while (runDay.Date <= dtpEDate.Value.Date)
                 {
                     WriteLog("Execute: " + strProc + " -->" + runDay.ToString("yyyyMMdd"));
-                  
-                    
-                    row = _dtProc.Select("NAME = '" + strProc + "'").FirstOrDefault();
+                                    
+                    row = _dtProc.Select("NAME = '" + strProc + "' AND ARG_TYPE " + strSqlArgType).FirstOrDefault();
                     if (row["PATH_FOLDER"].ToString() != "" && chkSever.Checked) Path = row["PATH_FOLDER"].ToString();
                     if (row["DB_NAME"].ToString() == "HUBIC")
-                        dt = Load_Data_HubicDB(row["DB_NAME"].ToString(), strProc, NullToBlank(cboType.SelectedValue), "", runDay.ToString("yyyyMMdd"));
+                        dt = Load_Data_HubicDB(row["DB_NAME"].ToString(), strProc, strType, "", runDay.ToString("yyyyMMdd"));
                     else
-                        dt = Load_Data(row["DB_NAME"].ToString(), strProc, NullToBlank(cboType.SelectedValue), "", runDay.ToString("yyyyMMdd"));
+                        dt = Load_Data(row["DB_NAME"].ToString(), strProc, strType, "", runDay.ToString("yyyyMMdd"));
                     if (dt != null)
                     {
                         WriteLog("Row: "  + dt.Rows.Count.ToString());
@@ -560,7 +581,7 @@ namespace ExportForPostech
         [Obsolete]
         private void cmdRunAll_Click(object sender, EventArgs e)
         {
-            Run("RUN");
+            ExecAll();
         }
 
         
