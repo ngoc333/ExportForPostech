@@ -346,6 +346,54 @@ namespace ExportForPostech
         }
 
         [Obsolete]
+        private void Export_Excel()
+        {
+            try
+            {
+                _isRun = true;
+
+                string strProc = cboProc.SelectedValue.ToString();
+                DateTime runDay = dtpDate.Value;
+                string Path = Application.StartupPath + @"\Export\";
+                string strType = NullToBlank(cboType.SelectedValue);
+                string strSqlArgType = strType == "" ? "IS NULL" : " ='" + strType + "'";
+                DataTable dt;
+                DataRow row;
+                WriteLog("Start Run");
+                while (runDay.Date <= dtpEDate.Value.Date)
+                {
+                    WriteLog("Execute: " + strProc + " -->" + runDay.ToString("yyyyMMdd"));
+                    
+                    row = _dtProc.Select("NAME = '" + strProc + "' AND ARG_TYPE " + strSqlArgType).FirstOrDefault();
+                    if (row["PATH_FOLDER"].ToString() != "" && chkSever.Checked) Path = row["PATH_FOLDER"].ToString();
+                    if (row["DB_NAME"].ToString() == "HUBIC")
+                        dt = Load_Data_HubicDB(row["DB_NAME"].ToString(), strProc, strType, "", runDay.ToString("yyyyMMdd"));
+                    else
+                        dt = Load_Data(row["DB_NAME"].ToString(), strProc, strType, "", runDay.ToString("yyyyMMdd"));
+                    if (dt != null)
+                    {
+                        WriteLog("Row: " + dt.Rows.Count.ToString());
+                        Excel.ExcelExport obj = new Excel.ExcelExport();
+                        obj.WriteDataTableToExcel(dt, "Sheet1", string.Format(row["FILE_NAME"].ToString().Replace(".txt",".xlsx"), runDay.ToString("yyyyMMdd")), "");
+                    }
+                    else
+                        WriteLog("Run No Data");
+                    runDay = runDay.AddDays(1);
+                }
+                WriteLog("Finish Run");
+
+                
+            }
+            catch (Exception ex)
+            {
+                timer1.Enabled = true;
+                _isRun = false;
+                WriteLog("Error: " + ex.ToString());
+            }
+
+        }
+
+        [Obsolete]
         private void ExecAll()
         {
             try
@@ -584,8 +632,10 @@ namespace ExportForPostech
             ExecAll();
         }
 
-        
-
-        
+        [Obsolete]
+        private void cmd_ExportExcel_Click(object sender, EventArgs e)
+        {
+            Export_Excel();
+        }
     }
 }

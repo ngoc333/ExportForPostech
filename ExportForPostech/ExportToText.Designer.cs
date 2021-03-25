@@ -33,6 +33,7 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.chkSever = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.cmdRunAll = new System.Windows.Forms.Button();
             this.dtpEDate = new System.Windows.Forms.DateTimePicker();
@@ -40,7 +41,7 @@
             this.dtpDate = new System.Windows.Forms.DateTimePicker();
             this.cboType = new System.Windows.Forms.ComboBox();
             this.cboProc = new System.Windows.Forms.ComboBox();
-            this.chkSever = new System.Windows.Forms.CheckBox();
+            this.cmd_ExportExcel = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -78,6 +79,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.cmd_ExportExcel);
             this.panel1.Controls.Add(this.chkSever);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.cmdRunAll);
@@ -91,6 +93,16 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(648, 62);
             this.panel1.TabIndex = 2;
+            // 
+            // chkSever
+            // 
+            this.chkSever.AutoSize = true;
+            this.chkSever.Location = new System.Drawing.Point(403, 42);
+            this.chkSever.Name = "chkSever";
+            this.chkSever.Size = new System.Drawing.Size(87, 17);
+            this.chkSever.TabIndex = 10;
+            this.chkSever.Text = "Export Sever";
+            this.chkSever.UseVisualStyleBackColor = true;
             // 
             // label1
             // 
@@ -156,15 +168,15 @@
             this.cboProc.TabIndex = 0;
             this.cboProc.SelectionChangeCommitted += new System.EventHandler(this.cboProc_SelectionChangeCommitted);
             // 
-            // chkSever
+            // cmd_ExportExcel
             // 
-            this.chkSever.AutoSize = true;
-            this.chkSever.Location = new System.Drawing.Point(403, 42);
-            this.chkSever.Name = "chkSever";
-            this.chkSever.Size = new System.Drawing.Size(87, 17);
-            this.chkSever.TabIndex = 10;
-            this.chkSever.Text = "Export Sever";
-            this.chkSever.UseVisualStyleBackColor = true;
+            this.cmd_ExportExcel.Location = new System.Drawing.Point(489, 36);
+            this.cmd_ExportExcel.Name = "cmd_ExportExcel";
+            this.cmd_ExportExcel.Size = new System.Drawing.Size(109, 23);
+            this.cmd_ExportExcel.TabIndex = 11;
+            this.cmd_ExportExcel.Text = "Export Excel";
+            this.cmd_ExportExcel.UseVisualStyleBackColor = true;
+            this.cmd_ExportExcel.Click += new System.EventHandler(this.cmd_ExportExcel_Click);
             // 
             // ExportToText
             // 
@@ -196,6 +208,7 @@
         private System.Windows.Forms.Button cmdRunAll;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox chkSever;
+        private System.Windows.Forms.Button cmd_ExportExcel;
     }
 }
 
